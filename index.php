@@ -18,11 +18,22 @@ $numBlank = $firstDayWeek - 1;
     <title>Calendario</title>
 </head>
 <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+        font-size: 25px;
+    }
+    h1 {
+        font-size: 50px;
+        color: #333;
+    }
     td {
         border: 1px solid black;
-        padding: 10px;
-        width: 25px;
-        height: 25px;
+        padding: 30px;
+        margin: 0;
         text-align: center;
     }
     .actualDay {
@@ -35,6 +46,7 @@ $numBlank = $firstDayWeek - 1;
     }
 </style>
 <body>
+    <h1>Calendario <?php echo $year; ?></h1>
     <table>
     <?php
     echo '<tr>';

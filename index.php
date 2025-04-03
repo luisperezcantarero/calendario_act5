@@ -1,4 +1,6 @@
 <?php
+include_once 'conf.php'; // Se incluye el archivo de configuración
+
 $fechaActual = new DateTime();
 $month = $fechaActual->format("m"); // numero mes
 $year = $fechaActual->format("Y"); // año actual 2025
@@ -50,6 +52,18 @@ $nameMonth = $firstDayMonth->format("F"); // nombre del mes
         background-color: red;
         color: white;
     }
+    .localHoliday {
+        background-color: #ff9999;
+        color: white;
+    }
+    .regionalHoliday {
+        background-color: #ff6666;
+        color: white;
+    }
+    .nationalHoliday {
+        background-color: #ff3333;
+        color: white;
+    }
 </style>
 <body>
     <h1>Calendario <?php echo $year; ?></h1>
@@ -87,6 +101,13 @@ $nameMonth = $firstDayMonth->format("F"); // nombre del mes
         $class = '';
         if ($j == $actualDay && $month == $fechaActual->format("n") && $year == $fechaActual->format("Y")) {
             $class = 'actualDay';
+        }
+        // Se comprueba si el día es festivo
+        foreach ($holyDays as $type => $holidays) {
+            if (isset($holidays[$month]) && in_array($j, $holidays[$month])) {
+                $class = $holidays['style'];
+                break;
+            }
         }
         if ($dayOfWeek == 0) { // Si es domingo
             $class = 'freeDay';

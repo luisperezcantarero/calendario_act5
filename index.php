@@ -1,17 +1,18 @@
 <?php
 $fechaActual = new DateTime();
-$month = $fechaActual->format("m"); // numero mes = 3
-$year = $fechaActual->format("Y"); // 2025
-// $month = 3;
+$month = $fechaActual->format("m"); // numero mes
+$year = $fechaActual->format("Y"); // año actual 2025
+// $month = 1;
 // $year = 2025;
 $firstDayMonth = new DateTime("$year-$month-01"); // fecha del primer día
 $firstDayWeek = $firstDayMonth->format("N"); // 1, 2, 3, 4, 5, 6, 0 = Domingo
 $monthDays = $firstDayMonth->format("t"); // número de días del mes
 $actualDay = $fechaActual->format("j"); // día de hoy
 $numBlank = $firstDayWeek - 1;
+$nameMonth = $firstDayMonth->format("F"); // nombre del mes
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,6 +50,7 @@ $numBlank = $firstDayWeek - 1;
     <h1>Calendario <?php echo $year; ?></h1>
     <table>
     <?php
+    echo "<h2>$nameMonth</h2>";
     echo '<tr>';
     for ($i = 1; $i <= $numBlank; $i++) {
         echo '<td></td>';

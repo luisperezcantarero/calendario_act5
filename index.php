@@ -2,8 +2,13 @@
 $fechaActual = new DateTime();
 $month = $fechaActual->format("m"); // numero mes
 $year = $fechaActual->format("Y"); // año actual 2025
-// $month = 1;
-// $year = 2025;
+
+// Si se ha enviado el formulario, se actualizan los valores de mes y año
+if (isset($_POST['month']) && isset($_POST['year'])) {
+    $month = $_POST['month'];
+    $year = $_POST['year'];
+}
+
 $firstDayMonth = new DateTime("$year-$month-01"); // fecha del primer día
 $firstDayWeek = $firstDayMonth->format("N"); // 1, 2, 3, 4, 5, 6, 0 = Domingo
 $monthDays = $firstDayMonth->format("t"); // número de días del mes
@@ -48,6 +53,27 @@ $nameMonth = $firstDayMonth->format("F"); // nombre del mes
 </style>
 <body>
     <h1>Calendario <?php echo $year; ?></h1>
+    <form action="" method="post">
+        <label for="month">Mes:</label>
+        <select name="month" id="month">
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+                // Se selecciona el mes actual
+                if ($m == $month) {
+                    $selected = 'selected';
+                } else {
+                    $selected = '';
+                }
+                // Se asocia el número del mes con su nombre
+                $nameMonthOption = new DateTime("$year-$m-01");
+                echo '<option value="'. $m . '" ' . $selected . '>' . $nameMonthOption->format("F") . '</option>';
+            }
+            ?>
+        </select>
+        <label for="year">Año:</label>
+        <input type="number" name="year" id="year" value="<?php echo $year; ?>"/>
+        <input type="submit" value="Actualizar"/>
+    </form>
     <table>
     <?php
     echo "<h2>$nameMonth</h2>";

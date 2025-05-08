@@ -1,5 +1,6 @@
 <?php
-include_once 'conf.php'; // Se incluye el archivo de configuración
+session_start(); // Iniciar la sesión
+include_once 'conf/conf.php'; // Se incluye el archivo de configuración
 
 $fechaActual = new DateTime();
 $month = $fechaActual->format("m"); // numero mes
@@ -17,6 +18,50 @@ $monthDays = $firstDayMonth->format("t"); // número de días del mes
 $actualDay = $fechaActual->format("j"); // día de hoy
 $numBlank = $firstDayWeek - 1;
 $nameMonth = $firstDayMonth->format("F"); // nombre del mes
+
+// Construyo la tabla para el calendario
+$calendarRows = '';
+for ($i = 1; $i <= $numBlank; $i++) {
+    $calendarRows = $calendarRows . '<td></td>';
+}
+
+for ($j = 1; $j <= $monthDays; $j++) {
+    $date = new DateTime("$year-$month-$j");
+    $dayOfWeek = $date->format("w");
+    $class = '';
+
+    // Día actual
+    if ($j == $actualDay && $month == $fechaActual->format("n") && $year == $fechaActual->format("Y")) {
+        $class = 'actualDay';
+    }
+
+    // Festivos
+    foreach ($holyDays as $type => $holidays) {
+        if (isset($holidays[$month]) && in_array($j, $holidays[$month])) {
+            $class = $holidays['style'];
+            break;
+        }
+    }
+
+    // Domingo
+    if ($dayOfWeek == 0) {
+        $class = 'freeDay';
+    }
+
+    $fecha = "$year-$month-$j"; // Formato YYYY-MM-DD
+    // Si hay tareas, añadir la clase 'tarea'
+    if (isset($_SESSION['tareas'][$fecha]) && count($_SESSION['tareas'][$fecha]) > 0) {
+        $class .= ' tarea';
+    }    
+
+    // Generar celda
+    $calendarRows = $calendarRows . "<td class='$class'><a href='tarea.php?dia=$j&mes=$month&anyo=$year'>$j</a></td>";
+
+    // Nueva fila si es domingo
+    if ($dayOfWeek == 0) {
+        $calendarRows = $calendarRows . '</tr><tr>';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -64,6 +109,9 @@ $nameMonth = $firstDayMonth->format("F"); // nombre del mes
         background-color: #ff3333;
         color: white;
     }
+    .tarea {
+        border: 3px solid orange;
+    }
 </style>
 <body>
     <h1>Calendario <?php echo $year; ?></h1>
@@ -92,32 +140,11 @@ $nameMonth = $firstDayMonth->format("F"); // nombre del mes
     <?php
     echo "<h2>$nameMonth</h2>";
     echo '<tr>';
-    for ($i = 1; $i <= $numBlank; $i++) {
-        echo '<td></td>';
-    }
-    for ($j = 1; $j <= $monthDays; $j++) {
-        $date = new DateTime("$year-$month-$j");
-        $dayOfWeek = $date->format("w");
-        $class = '';
-        if ($j == $actualDay && $month == $fechaActual->format("n") && $year == $fechaActual->format("Y")) {
-            $class = 'actualDay';
-        }
-        // Se comprueba si el día es festivo
-        foreach ($holyDays as $type => $holidays) {
-            if (isset($holidays[$month]) && in_array($j, $holidays[$month])) {
-                $class = $holidays['style'];
-                break;
-            }
-        }
-        if ($dayOfWeek == 0) { // Si es domingo
-            $class = 'freeDay';
-        }
-        echo "<td class='$class'>$j</td>";
-        if ($dayOfWeek == 0) { // Si es domingo
-            echo '</tr><tr>';
-        }
-    }
+    echo $calendarRows;
     ?>
     </table>
+    <form action="guardar_tareas.php" method="post">
+        <input type="submit" name="guardar" value="Guardar tareas en archivo">
+    </form>
 </body>
 </html>
